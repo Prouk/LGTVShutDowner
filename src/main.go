@@ -4,14 +4,15 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Prouk/LGTVShutDowner/pkg"
-	"golang.org/x/net/websocket"
+	"io"
 	"log"
+	"time"
 )
 
 var cmd string
 
 func main() {
-	flag.StringVar(&cmd, "c", "PowerOn", "The command to send to send to the TV.")
+	flag.StringVar(&cmd, "c", "none", "The command to send to send to the TV.")
 	flag.Parse()
 	lsd, err := pkg.NewLsd()
 	if err != nil {
@@ -25,21 +26,34 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = lsd.SendCommand(cmd)
-	if err != nil {
-		log.Fatal(err)
+	if cmd != "none" {
+		err = lsd.SendCommand(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	for {
 		if !lsd.WsConn.IsClientConn() {
 			break
 		}
-		var msg map[string]interface{}
-		err := websocket.JSON.Receive(lsd.WsConn, msg)
-		if err != nil {
-			fmt.Printf("Error receiving ws message: %s\n", err)
-		} else {
-			fmt.Printf("Message received: %s\n", msg)
+		buf := make([]byte, 0, 4096) // big buffer
+		tmp := make([]byte, 256)
+		for {
+			n, err := lsd.WsConn.Read(tmp)
+			if err != nil {
+				if err != io.EOF {
+					fmt.Println("read error:", err)
+				}
+				break
+			}
+			//fmt.Println("got", n, "bytes.")
+			buf = append(buf, tmp[:n]...)
+
 		}
+		if len(buf) > 0 {
+			fmt.Printf("received message: %s\n", string(buf))
+		}
+		time.Sleep(time.Millisecond * 1000)
 	}
-	fmt.Printf("Service Shutting down")
+	fmt.Printf("service Shutting down")
 }
