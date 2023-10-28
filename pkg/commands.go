@@ -11,16 +11,17 @@ type Commands struct {
 }
 
 type Command struct {
-	Name string `yaml:"name"`
-	URI  string `yaml:"uri"`
+	Name    string      `yaml:"name"`
+	URI     string      `yaml:"uri"`
+	Payload interface{} `yaml:"payload"`
 }
 
-func (c *Commands) ReadCommands() error {
+func (cs *Commands) ReadCommands() error {
 	yamlFile, err := os.ReadFile("./conf/commands.yaml")
 	if err != nil {
 		return err
 	}
-	err = yaml.Unmarshal(yamlFile, c)
+	err = yaml.Unmarshal(yamlFile, cs)
 	if err != nil {
 		return err
 	}

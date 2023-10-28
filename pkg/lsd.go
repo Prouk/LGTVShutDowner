@@ -15,11 +15,11 @@ type Lsd struct {
 }
 
 func NewLsd() (*Lsd, error) {
-	fmt.Printf("Creating lsd manager.\n")
+	fmt.Printf("Creating lsd manager\n")
 	lsd := &Lsd{}
 	lsd.Config = &Config{}
 	lsd.Commands = &Commands{}
-	fmt.Printf("Reading conf file.\n")
+	fmt.Printf("Reading conf file\n")
 	err := lsd.Config.ReadConf()
 	if err != nil {
 		fmt.Printf("Couldn't read config file: %s\n", err)
@@ -46,7 +46,7 @@ func (lsd *Lsd) ConnectTv() error {
 		return err
 	}
 	if ws.IsClientConn() {
-		fmt.Printf("Websocket client connected.\n")
+		fmt.Printf("Websocket client connected\n")
 	}
 	lsd.WsConn = ws
 	return nil

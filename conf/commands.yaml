@@ -1,5 +1,13 @@
 Commands: 
     - name: PowerOff
-      uri: ssap://audio/volumeUp
+      uri: ssap://com.webos.service.tvpower/power/turnOffScreen
+      payload: 
+          standbyMode: active
     - name: PowerOn
+      uri: ssap://com.webos.service.tvpower/power/turnOnScreen
+      payload: 
+          standbyMode: active
+    - name: VolumeDown
+      uri: ssap://audio/volumeDown
+    - name: VolumeUp
       uri: ssap://audio/volumeUp
