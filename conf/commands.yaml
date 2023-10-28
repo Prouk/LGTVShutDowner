@@ -1,13 +1,7 @@
-Commands: 
-  - name: PowerOff
+commands: 
+  - name: Connect
+    tooltip: Connect service to TV
     uri: ssap://com.webos.service.tvpower/power/turnOffScreen
-    payload: 
-      standbyMode: active
-  - name: PowerOn
-    uri: ssap://com.webos.service.tvpower/power/turnOnScreen
-    payload: 
-      standbyMode: active
-  - name: VolumeDown
-    uri: ssap://audio/volumeDown
-  - name: VolumeUp
-    uri: ssap://audio/volumeUp
+  - name: Quit
+    tooltip: Stop the service
+    uri: ssap://system.notifications/createToast
