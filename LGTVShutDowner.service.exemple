@@ -4,7 +4,6 @@ Description=LGTVShutDowner
 PartOf=graphical-session.target
 
 [Service]
-Us
 ExecStart=/opt/LGTVShutDowner/LGTVShutDowner -cfg /home/prouk/.config/LGTVShutDowner/ -cmd PowerOn
 Type=exec
 NotifyAccess=all
