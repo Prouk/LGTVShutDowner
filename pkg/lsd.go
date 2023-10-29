@@ -33,18 +33,18 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 	lsd.TVConnected = false
 	signal.Notify(lsd.SigChann)
 	if len(cfg) > 0 {
-		lsd.ConfigPath = cfg
+		lsd.ConfigFilePath = cfg
 	} else {
 		lsd.ConfigPath, err = os.UserConfigDir()
 		if err != nil {
 			log.Fatal(err)
 		}
-		lsd.ConfigPath += "/LGTVShutDown"
+		lsd.ConfigPath += "/LGTVShutDowner"
 		err := os.MkdirAll(lsd.ConfigPath, os.ModePerm)
 		if err != nil {
 			log.Println(err)
 		}
-		lsd.ConfigFilePath += "/config.yaml"
+		lsd.ConfigFilePath = lsd.ConfigPath + "/config.yaml"
 	}
 	lsd.LoadConfig()
 	go lsd.ListenSig()
