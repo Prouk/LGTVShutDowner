@@ -1,0 +1,10 @@
+// Put this in the /etc/systemd/system/ folder
+[Unit]
+Description=LGTVShutDown
+
+[Service]
+ExecStart=<Path to your executable> -cmd PowerOn
+Type=notify
+
+[Install]
+WantedBy=default.target

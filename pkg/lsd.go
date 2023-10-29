@@ -15,6 +15,7 @@ import (
 
 type Lsd struct {
 	Config      *Config
+	ConfigPath  string
 	TrayMenu    *TrayMenu
 	Ws          *Ws
 	TVConnected bool
@@ -22,13 +23,28 @@ type Lsd struct {
 	ExitChann   chan bool
 }
 
-func CreateLsd(cmd string) *Lsd {
+func CreateLsd(cmd string, cfg string) *Lsd {
+	var err error
 	lsd := new(Lsd)
 	lsd.SigChann = make(chan os.Signal)
 	lsd.ExitChann = make(chan bool)
 	lsd.Config = new(Config)
 	lsd.TVConnected = false
 	signal.Notify(lsd.SigChann)
+	if len(cfg) > 0 {
+		lsd.ConfigPath = cfg
+	} else {
+		lsd.ConfigPath, err = os.UserConfigDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		lsd.ConfigPath += "/LGTVShutDown"
+		err := os.MkdirAll(lsd.ConfigPath, os.ModePerm)
+		if err != nil {
+			log.Println(err)
+		}
+		lsd.ConfigPath += "/config.yaml"
+	}
 	lsd.LoadConfig()
 	go lsd.ListenSig()
 	lsd.CreateWs()
@@ -166,6 +182,7 @@ func (lsd *Lsd) ConnectScreen() {
 					"SEARCH",
 					"WRITE_SETTINGS",
 					"WRITE_NOTIFICATION_ALERT",
+					"WRITE_NOTIFICATION_TOAST",
 					"CONTROL_POWER",
 					"READ_CURRENT_CHANNEL",
 					"READ_RUNNING_APPS",
@@ -278,6 +295,7 @@ func (lsd *Lsd) VerifyConnect() {
 					"SEARCH",
 					"WRITE_SETTINGS",
 					"WRITE_NOTIFICATION_ALERT",
+					"WRITE_NOTIFICATION_TOAST",
 					"CONTROL_POWER",
 					"READ_CURRENT_CHANNEL",
 					"READ_RUNNING_APPS",
@@ -311,7 +329,7 @@ func (lsd *Lsd) PingScreen() {
 			PairingType:  "",
 			Manifest:     Manifest{},
 			ClientKey:    "",
-			Message:      "Ping",
+			Message:      "Hey, you cutie ;)",
 		},
 	})
 }

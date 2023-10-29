@@ -7,11 +7,13 @@ import (
 )
 
 var cmd string
+var cfg string
 
 func main() {
-	flag.StringVar(&cmd, "c", "", "Command to launch at service start time")
+	flag.StringVar(&cmd, "cmd", "", "Command to launch at service start time")
+	flag.StringVar(&cfg, "cfg", "", "Path to config file")
 	flag.Parse()
-	lsd := pkg.CreateLsd(cmd)
+	lsd := pkg.CreateLsd(cmd, cfg)
 	<-lsd.ExitChann
 	log.Printf("stopping lsd service\n")
 }
