@@ -14,13 +14,14 @@ import (
 )
 
 type Lsd struct {
-	Config      *Config
-	ConfigPath  string
-	TrayMenu    *TrayMenu
-	Ws          *Ws
-	TVConnected bool
-	SigChann    chan os.Signal
-	ExitChann   chan bool
+	Config         *Config
+	ConfigPath     string
+	TrayMenu       *TrayMenu
+	Ws             *Ws
+	TVConnected    bool
+	SigChann       chan os.Signal
+	ExitChann      chan bool
+	ConfigFilePath string
 }
 
 func CreateLsd(cmd string, cfg string) *Lsd {
@@ -43,7 +44,7 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 		if err != nil {
 			log.Println(err)
 		}
-		lsd.ConfigPath += "/config.yaml"
+		lsd.ConfigFilePath += "/config.yaml"
 	}
 	lsd.LoadConfig()
 	go lsd.ListenSig()
@@ -80,7 +81,7 @@ func (lsd *Lsd) HandleSig(sig os.Signal) {
 }
 
 func (lsd *Lsd) GetIcon() []byte {
-	data, err := os.ReadFile("./assets/screen.png")
+	data, err := os.ReadFile(lsd.ConfigPath + "/screen.png")
 	if err != nil {
 		log.Fatal(err)
 	}

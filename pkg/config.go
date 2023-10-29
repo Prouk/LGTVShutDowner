@@ -17,7 +17,7 @@ type Config struct {
 }
 
 func (lsd *Lsd) LoadConfig() {
-	file, err := os.ReadFile(lsd.ConfigPath)
+	file, err := os.ReadFile(lsd.ConfigFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func (lsd *Lsd) SaveConfig() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = os.WriteFile(lsd.ConfigPath, data, 0644)
+	err = os.WriteFile(lsd.ConfigFilePath, data, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
