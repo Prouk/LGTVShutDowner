@@ -19,7 +19,16 @@ Download latest [release](https://github.com/Prouk/LGTVShutDowner/releases) or b
 Classic installation should be like that :
 
 - Follow the `.config` like shown in the folder tree of the archive.
-- Create a LGTVShutDown folder in '/opt/' and put the file in the binary folder of archive
-- Complete the config file with your LGTVWebOs ip (normal communication) and MAC adress (wake on LAN)
-- Verify / Complete the LGTVShutDown.service file to match your file paths
+- Create a LGTVShutDown folder in '/opt/' and put the file in the binary folder of archive.
+- Complete the config file with your LGTVWebOs ip (normal communication) and MAC adress (wake on LAN).
+- Verify / Complete the LGTVShutDown.service file to match your file paths.
 - `systemctl --user enable LGTVShutDowner --now` to register and launch the service.
+
+## Usage
+
+### !You need to launch the service while the TV is on and connect to it at least one time !
+
+- Start the service and click on connect in the tray menu, then accept the connection on your TV.
+- Automatic screen turn on, on user session login.
+- Automatic screen turn on, on PC ShutDown.
+- Tray icon with interactions (connect, turn on, turn off, ping, list api for development purpose)
