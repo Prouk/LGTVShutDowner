@@ -68,6 +68,7 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 		}
 		if err != nil {
 			lsd.ExitChann <- true
+			return lsd
 		}
 		return lsd
 	}
