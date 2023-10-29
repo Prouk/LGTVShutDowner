@@ -59,7 +59,7 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 	}
 	if err != nil {
 		log.Printf("retrying\n")
-		for i := 0; i < 3; i++ { // start of the execution block
+		for i := 0; i < 5; i++ { // start of the execution block
 			time.Sleep(time.Millisecond * 1000)
 			err = lsd.CreateWs()
 			if err == nil {
