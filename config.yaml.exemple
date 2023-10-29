@@ -1,0 +1,5 @@
+LGTVShutDowner:
+    TVInfos:
+        ip: <LGTV IP>
+        mac: <LGTV MAC Adress>
+        clientKey: <Client Key (this will be populated automatically on first connection, but you must connect it yourself the first time)>
