@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+	"time"
 )
 
 type Lsd struct {
@@ -48,12 +49,27 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 	lsd.ConfigFilePath = lsd.ConfigPath + "/config.yaml"
 	lsd.LoadConfig()
 	go lsd.ListenSig()
-	lsd.CreateWs()
 	switch cmd {
 	case "PowerOn":
 		go lsd.TurnOnScreen()
+		err = lsd.CreateWs()
 	default:
 		log.Printf("error: command %s unknow", cmd)
+		err = lsd.CreateWs()
+	}
+	if err != nil {
+		log.Printf("retrying\n")
+		for i := 0; i < 3; i++ { // start of the execution block
+			time.Sleep(time.Millisecond * 1000)
+			err = lsd.CreateWs()
+			if err == nil {
+				break
+			}
+		}
+		if err != nil {
+			lsd.ExitChann <- true
+		}
+		return lsd
 	}
 	systray.Run(lsd.InitTray(cmd), lsd.Close)
 	return lsd

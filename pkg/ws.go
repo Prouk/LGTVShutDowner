@@ -15,7 +15,7 @@ type Ws struct {
 	i      int
 }
 
-func (lsd *Lsd) CreateWs() {
+func (lsd *Lsd) CreateWs() error {
 	var err error
 	res := new(http.Response)
 	ws := new(Ws)
@@ -26,12 +26,13 @@ func (lsd *Lsd) CreateWs() {
 	ws.client, res, err = dialer.Dial(uri.String(), nil)
 	if err != nil || res == nil {
 		log.Printf("error connecting to screen websocket: %s\n", err)
-		return
+		return err
 	}
 	log.Printf("websocket response: %s\n", res.Status)
 	lsd.Ws = ws
 	go lsd.VerifyConnect()
 	go lsd.ListenWs()
+	return nil
 }
 
 func (lsd *Lsd) ListenWs() {
