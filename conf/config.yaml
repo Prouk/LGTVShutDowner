@@ -1,4 +1,5 @@
 LGTVShutDowner: 
     TVInfos: 
-        Ip: 192.168.1.17
-        Mac: 20:28:BC:81:65:70
+        ip: 192.168.1.17:3001
+        mac: 20:28:BC:81:65:70
+        clientKey: 99e7e53fe246c572e7c88daa1346a3a0

@@ -1,7 +1,0 @@
-commands: 
-  - name: Connect
-    tooltip: Connect service to TV
-    uri: ssap://com.webos.service.tvpower/power/turnOffScreen
-  - name: Quit
-    tooltip: Stop the service
-    uri: ssap://system.notifications/createToast

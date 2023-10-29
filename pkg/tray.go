@@ -6,6 +6,8 @@ type TrayMenu struct {
 	ConnectMenuItem *systray.MenuItem
 	PingMenuItem    *systray.MenuItem
 	QuitMenuItem    *systray.MenuItem
+	OnMenuItem      *systray.MenuItem
+	OffMenuItem     *systray.MenuItem
 }
 
 func (lsd *Lsd) InitTray() {
@@ -19,6 +21,8 @@ func (lsd *Lsd) InitTray() {
 func (lsd *Lsd) GetTrayMenuItems() *TrayMenu {
 	tm := new(TrayMenu)
 	tm.ConnectMenuItem = systray.AddMenuItem("Connect", "Connect to the screen")
+	tm.OnMenuItem = systray.AddMenuItem("Turn On", "Turn on the screen")
+	tm.OffMenuItem = systray.AddMenuItem("ShutDown", "Shutdown the damn screen")
 	tm.PingMenuItem = systray.AddMenuItem("Ping", "Send Ping message to screen")
 	tm.QuitMenuItem = systray.AddMenuItem("Quit", "Stop lsd service")
 	return tm
@@ -27,6 +31,12 @@ func (lsd *Lsd) GetTrayMenuItems() *TrayMenu {
 func (lsd *Lsd) ListenClick() {
 	for {
 		select {
+		case <-lsd.TrayMenu.ConnectMenuItem.ClickedCh:
+			lsd.ConnectScreen()
+		case <-lsd.TrayMenu.OnMenuItem.ClickedCh:
+			lsd.TurnOnScreen()
+		case <-lsd.TrayMenu.OffMenuItem.ClickedCh:
+			lsd.TurnOffScreen()
 		case <-lsd.TrayMenu.PingMenuItem.ClickedCh:
 			lsd.PingScreen()
 		case <-lsd.TrayMenu.QuitMenuItem.ClickedCh:
