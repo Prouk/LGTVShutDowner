@@ -47,8 +47,8 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 		}
 	}
 	lsd.ConfigFilePath = lsd.ConfigPath + "/config.yaml"
-	lsd.LoadConfig()
 	go lsd.ListenSig()
+	lsd.LoadConfig()
 	switch cmd {
 	case "PowerOn":
 		go lsd.TurnOnScreen()
@@ -59,7 +59,7 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 	}
 	if err != nil {
 		log.Printf("retrying\n")
-		for i := 0; i < 5; i++ { // start of the execution block
+		for i := 0; i < 10; i++ { // start of the execution block
 			time.Sleep(time.Millisecond * 1000)
 			err = lsd.CreateWs()
 			if err == nil {
@@ -87,6 +87,7 @@ func (lsd *Lsd) ListenSig() {
 func (lsd *Lsd) HandleSig(sig os.Signal) {
 	switch sig {
 	case syscall.SIGTERM:
+		lsd.TurnOffScreen()
 		systray.Quit()
 		lsd.ExitChann <- true
 	case syscall.SIGINT:
