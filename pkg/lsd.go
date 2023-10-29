@@ -1,8 +1,12 @@
 package pkg
 
 import (
+	"bytes"
+	"encoding/binary"
 	"github.com/getlantern/systray"
+	"github.com/sabhiram/go-wol/wol"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"strconv"
@@ -18,7 +22,7 @@ type Lsd struct {
 	ExitChann   chan bool
 }
 
-func CreateLsd() *Lsd {
+func CreateLsd(cmd string) *Lsd {
 	lsd := new(Lsd)
 	lsd.SigChann = make(chan os.Signal)
 	lsd.ExitChann = make(chan bool)
@@ -28,7 +32,13 @@ func CreateLsd() *Lsd {
 	lsd.LoadConfig()
 	go lsd.ListenSig()
 	lsd.CreateWs()
-	systray.Run(lsd.InitTray, lsd.Close)
+	switch cmd {
+	case "PowerOn":
+		go lsd.TurnOnScreen()
+	default:
+		log.Printf("error: command %s unknow", cmd)
+	}
+	systray.Run(lsd.InitTray(cmd), lsd.Close)
 	return lsd
 }
 
@@ -91,13 +101,78 @@ func (lsd *Lsd) ConnectScreen() {
 						"": "LG Electronics",
 					},
 					Permissions: []string{
-						"",
+						"LAUNCH",
+						"LAUNCH_WEBAPP",
+						"APP_TO_APP",
+						"CLOSE",
+						"TEST_OPEN",
+						"TEST_PROTECTED",
+						"CONTROL_AUDIO",
+						"CONTROL_DISPLAY",
+						"CONTROL_INPUT_JOYSTICK",
+						"CONTROL_INPUT_MEDIA_RECORDING",
+						"CONTROL_INPUT_MEDIA_PLAYBACK",
+						"CONTROL_INPUT_TV",
+						"CONTROL_POWER",
+						"READ_APP_STATUS",
+						"READ_CURRENT_CHANNEL",
+						"READ_INPUT_DEVICE_LIST",
+						"READ_NETWORK_STATE",
+						"READ_RUNNING_APPS",
+						"READ_TV_CHANNEL_LIST",
+						"WRITE_NOTIFICATION_TOAST",
+						"READ_POWER_STATE",
+						"READ_COUNTRY_INFO",
+						"READ_SETTINGS",
+						"CONTROL_TV_SCREEN",
+						"CONTROL_TV_STANBY",
+						"CONTROL_FAVORITE_GROUP",
+						"CONTROL_USER_INFO",
+						"CHECK_BLUETOOTH_DEVICE",
+						"CONTROL_BLUETOOTH",
+						"CONTROL_TIMER_INFO",
+						"STB_INTERNAL_CONNECTION",
+						"CONTROL_RECORDING",
+						"READ_RECORDING_STATE",
+						"WRITE_RECORDING_LIST",
+						"READ_RECORDING_LIST",
+						"READ_RECORDING_SCHEDULE",
+						"WRITE_RECORDING_SCHEDULE",
+						"READ_STORAGE_DEVICE_LIST",
+						"READ_TV_PROGRAM_INFO",
+						"CONTROL_BOX_CHANNEL",
+						"READ_TV_ACR_AUTH_TOKEN",
+						"READ_TV_CONTENT_STATE",
+						"READ_TV_CURRENT_TIME",
+						"ADD_LAUNCHER_CHANNEL",
+						"SET_CHANNEL_SKIP",
+						"RELEASE_CHANNEL_SKIP",
+						"CONTROL_CHANNEL_BLOCK",
+						"DELETE_SELECT_CHANNEL",
+						"CONTROL_CHANNEL_GROUP",
+						"SCAN_TV_CHANNELS",
+						"CONTROL_TV_POWER",
+						"CONTROL_WOL",
 					},
 					Serial: "2f930e2d2cfe083771f68e4fe7bb07",
 				},
 				Permissions: []string{
-					"WRITE_NOTIFICATION_TOAST",
+					"TEST_SECURE",
+					"CONTROL_INPUT_TEXT",
+					"CONTROL_MOUSE_AND_KEYBOARD",
+					"READ_INSTALLED_APPS",
+					"READ_LGE_SDX",
+					"READ_NOTIFICATIONS",
+					"SEARCH",
+					"WRITE_SETTINGS",
+					"WRITE_NOTIFICATION_ALERT",
 					"CONTROL_POWER",
+					"READ_CURRENT_CHANNEL",
+					"READ_RUNNING_APPS",
+					"READ_UPDATE_INFO",
+					"UPDATE_FROM_REMOTE_APP",
+					"READ_LGE_TV_INPUT_EVENTS",
+					"READ_TV_CURRENT_TIME",
 				},
 				Signatures: []Signature{
 					{
@@ -138,13 +213,78 @@ func (lsd *Lsd) VerifyConnect() {
 						"": "LG Electronics",
 					},
 					Permissions: []string{
-						"",
+						"LAUNCH",
+						"LAUNCH_WEBAPP",
+						"APP_TO_APP",
+						"CLOSE",
+						"TEST_OPEN",
+						"TEST_PROTECTED",
+						"CONTROL_AUDIO",
+						"CONTROL_DISPLAY",
+						"CONTROL_INPUT_JOYSTICK",
+						"CONTROL_INPUT_MEDIA_RECORDING",
+						"CONTROL_INPUT_MEDIA_PLAYBACK",
+						"CONTROL_INPUT_TV",
+						"CONTROL_POWER",
+						"READ_APP_STATUS",
+						"READ_CURRENT_CHANNEL",
+						"READ_INPUT_DEVICE_LIST",
+						"READ_NETWORK_STATE",
+						"READ_RUNNING_APPS",
+						"READ_TV_CHANNEL_LIST",
+						"WRITE_NOTIFICATION_TOAST",
+						"READ_POWER_STATE",
+						"READ_COUNTRY_INFO",
+						"READ_SETTINGS",
+						"CONTROL_TV_SCREEN",
+						"CONTROL_TV_STANBY",
+						"CONTROL_FAVORITE_GROUP",
+						"CONTROL_USER_INFO",
+						"CHECK_BLUETOOTH_DEVICE",
+						"CONTROL_BLUETOOTH",
+						"CONTROL_TIMER_INFO",
+						"STB_INTERNAL_CONNECTION",
+						"CONTROL_RECORDING",
+						"READ_RECORDING_STATE",
+						"WRITE_RECORDING_LIST",
+						"READ_RECORDING_LIST",
+						"READ_RECORDING_SCHEDULE",
+						"WRITE_RECORDING_SCHEDULE",
+						"READ_STORAGE_DEVICE_LIST",
+						"READ_TV_PROGRAM_INFO",
+						"CONTROL_BOX_CHANNEL",
+						"READ_TV_ACR_AUTH_TOKEN",
+						"READ_TV_CONTENT_STATE",
+						"READ_TV_CURRENT_TIME",
+						"ADD_LAUNCHER_CHANNEL",
+						"SET_CHANNEL_SKIP",
+						"RELEASE_CHANNEL_SKIP",
+						"CONTROL_CHANNEL_BLOCK",
+						"DELETE_SELECT_CHANNEL",
+						"CONTROL_CHANNEL_GROUP",
+						"SCAN_TV_CHANNELS",
+						"CONTROL_TV_POWER",
+						"CONTROL_WOL",
 					},
 					Serial: "2f930e2d2cfe083771f68e4fe7bb07",
 				},
 				Permissions: []string{
-					"WRITE_NOTIFICATION_TOAST",
+					"TEST_SECURE",
+					"CONTROL_INPUT_TEXT",
+					"CONTROL_MOUSE_AND_KEYBOARD",
+					"READ_INSTALLED_APPS",
+					"READ_LGE_SDX",
+					"READ_NOTIFICATIONS",
+					"SEARCH",
+					"WRITE_SETTINGS",
+					"WRITE_NOTIFICATION_ALERT",
 					"CONTROL_POWER",
+					"READ_CURRENT_CHANNEL",
+					"READ_RUNNING_APPS",
+					"READ_UPDATE_INFO",
+					"UPDATE_FROM_REMOTE_APP",
+					"READ_LGE_TV_INPUT_EVENTS",
+					"READ_TV_CURRENT_TIME",
 				},
 				Signatures: []Signature{
 					{
@@ -177,11 +317,45 @@ func (lsd *Lsd) PingScreen() {
 }
 
 func (lsd *Lsd) TurnOnScreen() {
-	log.Printf("Truning on the screen\n")
+	packet, err := wol.New(lsd.Config.LGTVShutDowner.TVInfos.Mac)
+	if err != nil {
+		log.Printf("failed to turn off screen")
+	}
+	// Fill our byte buffer with the bytes in our MagicPacket
+	var buf bytes.Buffer
+	binary.Write(&buf, binary.BigEndian, packet)
+
+	// Get a UDPAddr to send the broadcast to
+	udpAddr, err := net.ResolveUDPAddr("udp", "255.255.255.255:9")
+	if err != nil {
+		log.Printf("Unable to get a UDP address for %s\n", "255.255.255.255:9")
+		return
+	}
+
+	// Open a UDP connection, and defer its cleanup
+	connection, err := net.DialUDP("udp", nil, udpAddr)
+	if err != nil {
+		log.Printf("Unable to dial UDP address for %s\n", "255.255.255.255:9")
+		return
+	}
+	defer connection.Close()
+
+	// Write the bytes of the MagicPacket to the connection
+	bytesWritten, err := connection.Write(buf.Bytes())
+	if err != nil {
+		log.Printf("Unable to write packet to connection\n")
+		return
+	} else if bytesWritten != 102 {
+		log.Printf("warning: %d bytes written, %d expected!\n", bytesWritten, 102)
+	}
+}
+
+func (lsd *Lsd) GetAPIList() {
+	log.Printf("Getting API List\n")
 	lsd.SendWs(&Message{
 		Type: "request",
 		ID:   strconv.Itoa(lsd.Ws.i),
-		Uri:  "ssap://system.notifications/createToast",
+		Uri:  "ssap://api/getServiceList",
 		Payload: Payload{
 			ForcePairing: false,
 			Volume:       0,
@@ -198,7 +372,7 @@ func (lsd *Lsd) TurnOffScreen() {
 	lsd.SendWs(&Message{
 		Type: "request",
 		ID:   strconv.Itoa(lsd.Ws.i),
-		Uri:  "ssap://system.notifications/createToast",
+		Uri:  "ssap://system/turnOff",
 		Payload: Payload{
 			ForcePairing: false,
 			Volume:       0,

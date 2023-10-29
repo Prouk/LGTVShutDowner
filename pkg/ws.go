@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Ws struct {
@@ -62,10 +63,15 @@ func (lsd *Lsd) HandleWsMsg(b []byte) {
 	switch string(v.GetStringBytes("type")) {
 	case "registered":
 		log.Printf("message received: %s\n", b)
-		log.Printf("message received: %s\n", b)
 		s := v.GetObject("payload").Get("client-key").String()
 		lsd.Config.LGTVShutDowner.TVInfos.ClientKey = s[1 : len(s)-1]
 		lsd.SaveConfig()
+	case "error":
+		log.Printf("permission error, trying to reconnect: %s\n", b)
+		errPld := string(v.GetStringBytes("error"))
+		if strings.Contains(errPld, "401") {
+			lsd.VerifyConnect()
+		}
 	default:
 		log.Printf("no handler for message received: %s\n", b)
 	}
