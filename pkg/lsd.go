@@ -33,7 +33,7 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 	lsd.TVConnected = false
 	signal.Notify(lsd.SigChann)
 	if len(cfg) > 0 {
-		lsd.ConfigFilePath = cfg
+		lsd.ConfigPath = cfg
 	} else {
 		lsd.ConfigPath, err = os.UserConfigDir()
 		if err != nil {
@@ -44,8 +44,8 @@ func CreateLsd(cmd string, cfg string) *Lsd {
 		if err != nil {
 			log.Println(err)
 		}
-		lsd.ConfigFilePath = lsd.ConfigPath + "/config.yaml"
 	}
+	lsd.ConfigFilePath = lsd.ConfigPath + "/config.yaml"
 	lsd.LoadConfig()
 	go lsd.ListenSig()
 	lsd.CreateWs()
