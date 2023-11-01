@@ -6,7 +6,7 @@ I want to shut down my Screen at the same time as the PC
 
 > **This tool is only intended to work on Linux.**
 > For windows user, please go
-> see [Maassoft/ColorControl](https://github.com/Maassoft/ColorControl")
+> see [Maassoft/ColorControl](https://github.com/Maassoft/ColorControl)
 
 If used correctly, this tool create a system tray icon with wich you can send different commands to you WebOS screen.
 
